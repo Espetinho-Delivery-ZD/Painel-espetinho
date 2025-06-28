@@ -4,7 +4,7 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Espetinho Delivery ZD</title>
-  
+
   <link rel="manifest" href="manifest.json">
   <link rel="icon" type="image/png" sizes="192x192" href="logo1.png">
   <link rel="apple-touch-icon" href="logo1.png">
@@ -179,9 +179,7 @@
     }
   </style>
 </head>
-
 <body>
-
   <header class="top-header">
     <h1>Espetinho Delivery ZD</h1>
     <p>Siga no Instagram: <strong>@espetinhodeliveryzd</strong></p>
@@ -196,23 +194,18 @@
 
     <div class="telefone">
       <h3>INFORME SEU NÚMERO DE WHATSAPP:</h3><br>
-      
-      <input type="text" id="numeroCliente" rows="4" placeholder="Digite seu nome ou número de WhatsApp"></textarea>
-
+      <input type="text" id="numeroCliente" placeholder="Digite seu nome ou número de WhatsApp">
     </div>
 
     <div class="pedido-quantidade">
-      
       <h3>QUANTOS ESPETINHOS VOCÊ DESEJA ?</h3><br>
       <input type="number" id="quantidadePedidos" min="1" value="1" onchange="atualizarPedidos()">
     </div>
 
     <div id="pedidosContainer"></div>
-
     <div class="taxa-entrega" id="taxaEntregaInfo"></div>
 
     <div class="endereco">
-      
       <h3>INFORME SEU ENDEREÇO DE ENTREGA:</h3><br>
       <textarea id="enderecoEntrega" rows="4" placeholder="Digite o endereço de entrega..."></textarea>
     </div>
@@ -220,162 +213,26 @@
     <button id="finalizarPedido" onclick="finalizarPedido()">Finalizar Pedido</button>
   </div>
 
+  <!-- Firebase SDK -->
+  <script src="https://www.gstatic.com/firebasejs/9.22.2/firebase-app-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/9.22.2/firebase-database-compat.js"></script>
   <script>
-    const precoEspeto = {
-      "Gado": 18.00,
-      "Frango": 15.00,
-      "Toscana": 15.00,
-      "Gado e Toscana": 15.00,
-      "Gado e Frango": 15.00,
-      "Toscana e Frango": 15.00,
-      "Gado, Frango e Toscana": 15.00
+    const firebaseConfig = {
+      apiKey: "AIzaSyAflTMf7l_smxjn9Qv4j9akPiJVDR-eNQw",
+      authDomain: "espetinhodeliveryzd.firebaseapp.com",
+      databaseURL: "https://espetinhodeliveryzd-default-rtdb.firebaseio.com",
+      projectId: "espetinhodeliveryzd",
+      storageBucket: "espetinhodeliveryzd.firebasestorage.app",
+      messagingSenderId: "898204860710",
+      appId: "1:898204860710:web:2a6027717b92200772c1e7",
+      measurementId: "G-58KXNPPM16"
     };
 
-    const precoBebidas = {
-      "Suco de Maracuja": 5.00,
-      "Suco de Acerola": 5.00,
-      "Suco de Cupuacu": 5.00
-    };
-
-    function atualizarPedidos() {
-      const quantidade = document.getElementById('quantidadePedidos').value;
-      const pedidosContainer = document.getElementById('pedidosContainer');
-      const taxaInfo = document.getElementById('taxaEntregaInfo');
-
-      pedidosContainer.innerHTML = '';
-
-      for (let i = 0; i < quantidade; i++) {
-        const pedidoContainer = document.createElement('div');
-        pedidoContainer.classList.add('pedido-container');
-        pedidoContainer.innerHTML = `<h3>Pedido ${i + 1}</h3>`;
-
-        const pedidoSection = document.createElement('div');
-        pedidoSection.classList.add('pedido-section');
-
-        const espetos = document.createElement('div');
-        espetos.classList.add('categoria');
-        espetos.innerHTML = `
-          <h4>ESCOLHA O ESPETO:</h4>
-          <label><input type="radio" name="espeto_${i}" value="Gado"> Gado - R$18,00</label>
-          <label><input type="radio" name="espeto_${i}" value="Frango"> Frango - R$15,00</label>
-          <label><input type="radio" name="espeto_${i}" value="Toscana"> Toscana - R$15,00</label>
-          <label><input type="radio" name="espeto_${i}" value="Gado e Toscana"> Gado e Toscana - R$15,00</label>
-          <label><input type="radio" name="espeto_${i}" value="Gado e Frango"> Gado e Frango - R$15,00</label>
-          <label><input type="radio" name="espeto_${i}" value="Toscana e Frango"> Toscana e Frango - R$15,00</label>
-          <label><input type="radio" name="espeto_${i}" value="Gado, Frango e Toscana"> Gado, Frango e Toscana - R$15,00</label>
-        `;
-
-        const arroz = document.createElement('div');
-        arroz.classList.add('categoria');
-        arroz.innerHTML = `
-          <h4>ESCOLHA O ARROZ:</h4>
-          <label><input type="radio" name="arroz_${i}" value=" De Cenoura"> De Cenoura</label>
-          <label><input type="radio" name="arroz_${i}" value="Baião de Dois"> Baião de Dois</label>
-          <label><input type="radio" name="arroz_${i}" value="Sem arroz"> Sem Arroz</label>
-        `;
-
-        const acompanhamentos = document.createElement('div');
-        acompanhamentos.classList.add('categoria');
-        acompanhamentos.innerHTML = `
-          <h4>ESCOLHA OS ACOMPANHAMENTOS:</h4>
-          <label><input type="checkbox" name="acompanhamentos_${i}" value="Purê de Batata"> Purê de Batata</label>
-          <label><input type="checkbox" name="acompanhamentos_${i}" value="Vatapá de camarão com pimenta"> Vatapá com pimenta</label>
-          <label><input type="checkbox" name="acompanhamentos_${i}" value="Vatapá de camarão sem pimenta"> Vatapá sem pimenta</label>
-          <label><input type="checkbox" name="acompanhamentos_${i}" value="Salada"> Salada</label>
-          <label><input type="checkbox" name="acompanhamentos_${i}" value="Farofa"> Farofa</label>
-          <label><input type="checkbox" name="acompanhamentos_${i}" value="Batata Frita"> Batata Frita - R$3,00</label>
-        `;
-
-        const bebidas = document.createElement('div');
-        bebidas.classList.add('categoria');
-        bebidas.innerHTML = `
-          <h4>ESCOLHA SUA BEBIDA:</h4>
-          <label><input type="checkbox" name="Bebidas_${i}" value="Suco de Maracuja"> Suco de Maracujá 300 ml - R$5,00</label>
-      
-        `;
-
-        pedidoSection.appendChild(espetos);
-        pedidoSection.appendChild(arroz);
-        pedidoSection.appendChild(acompanhamentos);
-        pedidoSection.appendChild(bebidas);
-        pedidoContainer.appendChild(pedidoSection);
-        pedidosContainer.appendChild(pedidoContainer);
-      }
-
-      if (quantidade == 1) {
-        taxaInfo.textContent = "TAXA DE ENTREGA: R$2,00";
-      } else {
-        taxaInfo.textContent = "ENTREGA GRÁTIS!";
-      }
-    }
-
-    function finalizarPedido() {
-      const endereco = document.getElementById('enderecoEntrega').value.trim();
-      const numeroCliente = document.getElementById('numeroCliente').value.trim();
-
-      if (!numeroCliente) {
-        alert('Você deve informar seu número de WhatsApp!');
-        return;
-      }
-      if (!endereco) {
-        alert('Você deve informar um endereço de entrega!');
-        return;
-      }
-
-      let mensagem = "Olá, gostaria de fazer um pedido no Espetinho Delivery ZD:\n";
-      mensagem += `Nome ou Número do Cliente: ${numeroCliente}\n`;
-      mensagem += `Endereço de Entrega: ${endereco}\n`;
-
-      const pedidos = document.querySelectorAll('.pedido-section');
-      let totalPedido = 0;
-
-      for (let index = 0; index < pedidos.length; index++) {
-        const pedido = pedidos[index];
-        let espeto = pedido.querySelector(`input[name="espeto_${index}"]:checked`);
-        let arroz = pedido.querySelector(`input[name="arroz_${index}"]:checked`);
-        let acompanhamentos = pedido.querySelectorAll(`input[name="acompanhamentos_${index}"]:checked`);
-        let bebidas = pedido.querySelectorAll(`input[name="Bebidas_${index}"]:checked`);
-
-        if (!espeto || !arroz || acompanhamentos.length === 0) {
-          alert(`Pedido ${index + 1} está incompleto! Escolha espeto, arroz e pelo menos um acompanhamento.`);
-          return;
-        }
-
-        let valorEspeto = precoEspeto[espeto.value] || 0;
-        totalPedido += valorEspeto;
-
-        mensagem += `\nPedido ${index + 1}:\n`;
-        mensagem += `Espeto: ${espeto.value}\n`;
-        mensagem += `Arroz: ${arroz.value}\n`;
-
-        let acompList = [];
-        acompanhamentos.forEach(a => {
-          acompList.push(a.value);
-          if (a.value === "Batata Frita") totalPedido += 3.00;
-        });
-        mensagem += `Acompanhamentos: ${acompList.join(", ")}\n`;
-
-        if (bebidas.length > 0) {
-          let bebidasList = [];
-          bebidas.forEach(b => {
-            bebidasList.push(b.value);
-            totalPedido += precoBebidas[b.value] || 0;
-          });
-          mensagem += `Bebidas: ${bebidasList.join(", ")}\n`;
-        }
-      }
-
-      const taxaEntrega = pedidos.length === 1 ? 2.00 : 0.00;
-      totalPedido += taxaEntrega;
-
-      mensagem += `\nValor Total do Pedido: R$ ${totalPedido.toFixed(2)}`;
-
-      const urlWhatsApp = `https://wa.me/5598985349559?text=${encodeURIComponent(mensagem)}`;
-      window.location.href = urlWhatsApp;
-    }
-
-    atualizarPedidos();
+    firebase.initializeApp(firebaseConfig);
+    const database = firebase.database();
   </script>
+
+  <script src="script.js"></script>
 
   <footer class="bottom-footer">
     <p>&copy; 2024 Espetinho Delivery ZD. Todos os direitos reservados.</p>
