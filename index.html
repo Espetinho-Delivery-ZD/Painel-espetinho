@@ -3,239 +3,75 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Espetinho Delivery ZD</title>
-
-  <link rel="manifest" href="manifest.json">
-  <link rel="icon" type="image/png" sizes="192x192" href="logo1.png">
-  <link rel="apple-touch-icon" href="logo1.png">
-  <link rel="stylesheet" href="style.css">
-
+  <title>Painel Administrativo - Espetinho Delivery ZD</title>
   <style>
     body {
+      font-family: Arial, sans-serif;
+      background-color: #f9f9f9;
       margin: 0;
-      padding: 0;
-      font-family: 'Montserrat', sans-serif;
-      color: #ffffff;
-      background: url('logo.png') no-repeat center center fixed;
-      background-size: cover;
-      position: relative;
-      min-height: 100vh;
-      overflow-x: hidden;
+      padding: 20px;
     }
-
-    body::before {
-      content: "";
-      position: absolute;
-      top: 0px;
-      left: 0px;
-      width: 100%;
-      height: 100%;
-      background: rgba(0, 0, 0, 0.7);
-      z-index: -1;
-    }
-
-    .top-header {
-      position: fixed;
-      top: 0;
-      left: 0;
-      width: 100%;
-      background-color: rgba(0, 0, 0, 0.85);
-      color: #fca311;
-      text-align: center;
-      padding: 15px 0;
-      font-size: 20px;
-      z-index: 1000;
-      border-bottom: 2px solid #fca311;
-    }
-
-    header p {
-      font-size: 1rem;
-      color: #fff;
-    }
-
-    .bottom-footer {
-      position: fixed;
-      bottom: 0;
-      left: 0;
-      width: 100%;
-      background-color: rgba(0, 0, 0, 0.85);
-      color: #ffffff;
-      text-align: center;
-      padding: 10px 0;
-      font-size: 14px;
-      z-index: 1000;
-      box-shadow: 0 -2px 5px rgba(255, 255, 255, 0.1);
-    }
-
-    .container {
-      max-width: 900px;
-      margin: auto;
-      padding-top: 80px;
-      padding-bottom: 80px;
-    }
-
-    header {
-      text-align: center;
-      margin-bottom: 20px;
-    }
-
     h1 {
-      font-family: 'Montserrat', sans-serif;
-      font-size: 40px;
-      color: #fca311;
-      margin: 0;
-    }
-
-    .logo {
-      width: 400px;
-      margin-top: 50px;
-    }
-
-    h3 {
-      margin-top: 20px;
-      color: #000000;
-    }
-
-    h4 {
-      margin-top: 10px;
+      text-align: center;
       color: #fca311;
     }
-
-    input[type="number"],
-    textarea,
-    input[type="text"] {
-      width: 150px;
-      padding: 10px;
-      border: none;
-      border-radius: 10px;
-      margin-bottom: 10px;
-      font-family: 'Montserrat', sans-serif;
-      background-color: rgb(255, 255, 255);
-      border: 1px solid #ffffff;
-    }
-
-    textarea {
-      resize: none;
-    }
-
-    button {
-      background-color: #fca311;
-      color: #000;
-      border: none;
-      padding: 12px 20px;
-      font-size: 16px;
-      border-radius: 8px;
-      cursor: pointer;
-      width: 100%;
-      font-weight: bold;
-      transition: 0.3s;
-    }
-
-    button:hover {
-      background-color: #fca311;
-    }
-
-    .pedido-container {
-      border: 1px solid #fca311;
+    .pedido {
+      background-color: white;
       padding: 15px;
-      margin: 10px 0;
-      border-radius: 10px;
-      background-color: #fca311;
-    }
-
-    .pedido-section {
-      display: flex;
-      flex-wrap: wrap;
-      justify-content: space-between;
-      border-radius: 10px;
-      background-color: rgb(0, 0, 0);
-    }
-
-    .categoria {
-      flex: 1;
-      min-width: 200px;
-      margin: 10px;
-    }
-
-    label {
-      display: block;
       margin-bottom: 15px;
+      border: 1px solid #ccc;
+      border-left: 5px solid #fca311;
+      box-shadow: 0 2px 5px rgba(0,0,0,0.1);
     }
-
-    .taxa-entrega {
-      font-weight: bold;
-      margin-top: 15px;
-      color: #6fe76f;
+    .pedido h3 {
+      margin: 0 0 10px;
     }
-
-    .overlay {
-      background-color: rgba(0, 0, 0, 0.85);
-      width: 100%;
-      height: 100%;
-      position: absolute;
-      top: 0;
-      left: 0;
-      z-index: -1;
+    .pedido p {
+      margin: 5px 0;
+      white-space: pre-wrap;
     }
   </style>
-</head>
-<body>
-  <header class="top-header">
-    <h1>Espetinho Delivery ZD</h1>
-    <p>Siga no Instagram: <strong>@espetinhodeliveryzd</strong></p>
-  </header>
+  <script type="module">
+    // Importa os pacotes Firebase
+    import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js";
+    import { getDatabase, ref, onChildAdded } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-database.js";
 
-  <div class="overlay"></div>
-
-  <div class="container">
-    <header>
-      <img src="logo.png" alt="Logo Espetinho Delivery ZD" class="logo">
-    </header>
-
-    <div class="telefone">
-      <h3>INFORME SEU NÚMERO DE WHATSAPP:</h3><br>
-      <input type="text" id="numeroCliente" placeholder="Digite seu nome ou número de WhatsApp">
-    </div>
-
-    <div class="pedido-quantidade">
-      <h3>QUANTOS ESPETINHOS VOCÊ DESEJA ?</h3><br>
-      <input type="number" id="quantidadePedidos" min="1" value="1" onchange="atualizarPedidos()">
-    </div>
-
-    <div id="pedidosContainer"></div>
-    <div class="taxa-entrega" id="taxaEntregaInfo"></div>
-
-    <div class="endereco">
-      <h3>INFORME SEU ENDEREÇO DE ENTREGA:</h3><br>
-      <textarea id="enderecoEntrega" rows="4" placeholder="Digite o endereço de entrega..."></textarea>
-    </div>
-
-    <button id="finalizarPedido" onclick="finalizarPedido()">Finalizar Pedido</button>
-  </div>
-
-  <!-- Firebase SDK -->
-  <script src="https://www.gstatic.com/firebasejs/9.22.2/firebase-app-compat.js"></script>
-  <script src="https://www.gstatic.com/firebasejs/9.22.2/firebase-database-compat.js"></script>
-  <script>
+    // Configuração do Firebase
     const firebaseConfig = {
       apiKey: "AIzaSyAflTMf7l_smxjn9Qv4j9akPiJVDR-eNQw",
       authDomain: "espetinhodeliveryzd.firebaseapp.com",
       databaseURL: "https://espetinhodeliveryzd-default-rtdb.firebaseio.com",
       projectId: "espetinhodeliveryzd",
-      storageBucket: "espetinhodeliveryzd.firebasestorage.app",
+      storageBucket: "espetinhodeliveryzd.appspot.com",
       messagingSenderId: "898204860710",
       appId: "1:898204860710:web:2a6027717b92200772c1e7",
       measurementId: "G-58KXNPPM16"
     };
 
-    firebase.initializeApp(firebaseConfig);
-    const database = firebase.database();
+    // Inicialização
+    const app = initializeApp(firebaseConfig);
+    const db = getDatabase(app);
+
+    const pedidosRef = ref(db, 'pedidos');
+    const lista = document.getElementById('lista-pedidos');
+
+    onChildAdded(pedidosRef, (snapshot) => {
+      const pedido = snapshot.val();
+      const div = document.createElement('div');
+      div.className = 'pedido';
+      div.innerHTML = `
+        <h3>📦 Pedido Recebido</h3>
+        <p><strong>Nome/WhatsApp:</strong> ${pedido.numeroCliente || '---'}</p>
+        <p><strong>Endereço:</strong> ${pedido.endereco || '---'}</p>
+        <p><strong>Resumo:</strong></p>
+        <p>${pedido.mensagem.replaceAll("\n", "<br>")}</p>
+      `;
+      lista.prepend(div);
+    });
   </script>
-
-  <script src="script.js"></script>
-
-  <footer class="bottom-footer">
-    <p>&copy; 2024 Espetinho Delivery ZD. Todos os direitos reservados.</p>
-  </footer>
+</head>
+<body>
+  <h1>Painel de Pedidos - Espetinho Delivery ZD</h1>
+  <div id="lista-pedidos"></div>
 </body>
 </html>
